@@ -1,2 +1,4 @@
-requests
-httpagentparser
+fastapi==0.115.0
+uvicorn==0.30.0
+requests==2.31.0
+httpagentparser==1.9.5
